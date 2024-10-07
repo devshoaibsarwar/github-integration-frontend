@@ -1,0 +1,18 @@
+<div *ngIf="integrationDetails">
+  <mat-panel>
+    <mat-panel-title>
+      GitHub Integration - Connected
+      <span style="color: green">✔️</span>
+    </mat-panel-title>
+    <mat-panel-description>
+      Connected on {{ integrationDetails.createdAt | date : "short" }}
+    </mat-panel-description>
+    <button mat-button (click)="remove()">Remove Integration</button>
+  </mat-panel>
+</div>
+
+<div *ngIf="!integrationDetails">
+  <button mat-raised-button color="primary" (click)="connect()">
+    Connect to GitHub
+  </button>
+</div>
