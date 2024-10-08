@@ -1,0 +1,31 @@
+:host {
+  width: 100%;
+}
+
+mat-panel-title {
+  justify-content: space-between;
+}
+
+.connect-panel ::ng-deep {
+  .mat-expansion-panel-body {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.mat-icon {
+  font-size: 20px;
+  color: green;
+}
+
+.integration-panel {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IntegrationDetails } from 'src/app/interfaces/User';
 import { GithubService } from 'src/app/services/github.service';
 
 @Component({
@@ -8,15 +10,52 @@ import { GithubService } from 'src/app/services/github.service';
 })
 export class GithubIntegrationComponent implements OnInit {
   integrationDetails: any;
-  username: string = 'your_github_username'; // Use logged-in user's username
+  isLoading = true;
 
-  constructor(private githubService: GithubService) {}
+  constructor(
+    private githubService: GithubService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    // Check if integration exists
-    this.githubService.getIntegration(this.username).subscribe((data) => {
-      this.integrationDetails = data;
+    this.route.queryParams.subscribe((params) => {
+      const { code } = params || {};
+
+      if (!code) {
+        this.getIntegrationDetails();
+        return;
+      }
+
+      this.getAccessToken(code);
     });
+  }
+
+  getIntegrationDetails() {
+    this.githubService.getIntegrationDetails().subscribe(
+      (response: any) => {
+        this.integrationDetails = response?.data as IntegrationDetails;
+        this.isLoading = false;
+      },
+      (error: any) => {
+        console.error('Error in component:', error);
+        this.isLoading = false;
+      }
+    );
+  }
+
+  getAccessToken(code: string) {
+    this.githubService.getAccessToken(code).subscribe(
+      (response) => {
+        const user = response.data as IntegrationDetails;
+        this.router.navigate(['/github']);
+        localStorage.setItem('accessToken', user.accessToken);
+      },
+      (error) => {
+        console.error('Error in component:', error);
+        this.router.navigate(['/github']);
+      }
+    );
   }
 
   connect(): void {
@@ -24,8 +63,8 @@ export class GithubIntegrationComponent implements OnInit {
   }
 
   remove(): void {
-    this.githubService.removeIntegration(this.username).subscribe(() => {
-      this.integrationDetails = null;
+    this.githubService.removeIntegration().subscribe(() => {
+      localStorage.removeItem('accessToken');
     });
   }
 }
