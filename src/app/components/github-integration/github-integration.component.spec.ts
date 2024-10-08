@@ -82,6 +82,7 @@ describe('GithubIntegrationComponent', () => {
   it('should handle errors in getting integration details', () => {
     githubService.getIntegrationDetails.and.returnValue(throwError('Error'));
 
+    // @ts-ignore
     component.getIntegrationDetails();
 
     expect(component.isLoading).toBeFalse();

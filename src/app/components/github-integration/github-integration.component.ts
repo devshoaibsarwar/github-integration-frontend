@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { IntegrationDetails } from 'src/app/interfaces/User';
 import { GithubService } from 'src/app/services/github.service';
 
@@ -9,8 +10,10 @@ import { GithubService } from 'src/app/services/github.service';
   styleUrls: ['./github-integration.component.css'],
 })
 export class GithubIntegrationComponent implements OnInit {
-  integrationDetails: any;
+  integrationDetails: IntegrationDetails | null = null;
   isLoading = true;
+  private readonly _destroy$ = new Subject<void>();
+  public readonly destroy$ = this._destroy$.asObservable();
 
   constructor(
     private githubService: GithubService,
@@ -19,43 +22,56 @@ export class GithubIntegrationComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      const { code } = params || {};
+    this.route.queryParams
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((params) => {
+        const { code } = params || {};
 
-      if (!code) {
-        this.getIntegrationDetails();
-        return;
-      }
+        if (!code) {
+          this.getIntegrationDetails();
+          return;
+        }
 
-      this.getAccessToken(code);
-    });
+        this.getAccessToken(code);
+      });
   }
 
-  getIntegrationDetails() {
-    this.githubService.getIntegrationDetails().subscribe(
-      (response: any) => {
-        this.integrationDetails = response?.data as IntegrationDetails;
-        this.isLoading = false;
-      },
-      (error: any) => {
-        console.error('Error in component:', error);
-        this.isLoading = false;
-      }
-    );
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
-  getAccessToken(code: string) {
-    this.githubService.getAccessToken(code).subscribe(
-      (response) => {
-        const user = response.data as IntegrationDetails;
-        this.router.navigate(['/github']);
-        localStorage.setItem('accessToken', user.accessToken);
-      },
-      (error) => {
-        console.error('Error in component:', error);
-        this.router.navigate(['/github']);
-      }
-    );
+  private getIntegrationDetails() {
+    this.githubService
+      .getIntegrationDetails()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe(
+        (response: any) => {
+          this.integrationDetails = response?.data as IntegrationDetails;
+          this.isLoading = false;
+        },
+        (error: any) => {
+          console.error('Error in component:', error);
+          this.isLoading = false;
+        }
+      );
+  }
+
+  private getAccessToken(code: string) {
+    this.githubService
+      .getAccessToken(code)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe(
+        (response) => {
+          const user = response.data as IntegrationDetails;
+          this.router.navigate(['/github']);
+          localStorage.setItem('accessToken', user.accessToken);
+        },
+        (error) => {
+          console.error('Error in component:', error);
+          this.router.navigate(['/github']);
+        }
+      );
   }
 
   connect(): void {
@@ -63,9 +79,18 @@ export class GithubIntegrationComponent implements OnInit {
   }
 
   remove(): void {
-    this.githubService.removeIntegration().subscribe(() => {
-      localStorage.removeItem('accessToken');
-      this.integrationDetails = null;
-    });
+    this.githubService
+      .removeIntegration()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe(
+        (response) => {
+          localStorage.removeItem('accessToken');
+          this.integrationDetails = null;
+        },
+        (error) => {
+          console.error('Error in component:', error);
+          this.router.navigate(['/github']);
+        }
+      );
   }
 }

@@ -59,6 +59,7 @@ describe('RepositoriesComponent', () => {
     };
     githubService.getUserRepos.and.returnValue(of(mockResponse));
 
+    // @ts-ignore
     component.getUserRepos();
 
     expect(githubService.getUserRepos).toHaveBeenCalledWith(1);
@@ -69,6 +70,7 @@ describe('RepositoriesComponent', () => {
   it('should handle errors when fetching user repositories', () => {
     githubService.getUserRepos.and.returnValue(throwError('Error'));
 
+    // @ts-ignore
     component.getUserRepos();
 
     expect(component.isLoading).toBeFalse();
