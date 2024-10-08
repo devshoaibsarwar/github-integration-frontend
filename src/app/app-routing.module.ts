@@ -11,6 +11,10 @@ const routes: Routes = [
     path: 'redirect',
     component: GithubIntegrationComponent,
   },
+  {
+    path: '**',
+    redirectTo: 'github',
+  },
 ];
 
 @NgModule({

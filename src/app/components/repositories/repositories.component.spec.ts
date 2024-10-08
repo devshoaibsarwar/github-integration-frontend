@@ -1,21 +1,83 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { RepositoriesComponent } from './repositories.component';
+import { GithubService } from 'src/app/services/github.service';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { of, throwError } from 'rxjs';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('RepositoriesComponent', () => {
   let component: RepositoriesComponent;
   let fixture: ComponentFixture<RepositoriesComponent>;
+  let githubService: jasmine.SpyObj<GithubService>;
 
   beforeEach(() => {
+    const githubServiceSpy = jasmine.createSpyObj('GithubService', [
+      'getUserRepos',
+    ]);
+
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       declarations: [RepositoriesComponent],
-    });
+      providers: [
+        { provide: HttpClientTestingModule },
+        { provide: GithubService, useValue: githubServiceSpy },
+      ],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(RepositoriesComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    githubService = TestBed.inject(
+      GithubService
+    ) as jasmine.SpyObj<GithubService>;
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should initialize the data source on init', () => {
+    component.ngOnInit();
+
+    expect(githubService.getUserRepos).toHaveBeenCalledWith(1);
+  });
+
+  it('should set paginator after view init', () => {
+    component.ngAfterViewInit();
+
+    expect(component.dataSource.paginator).toBeUndefined();
+
+    component.paginator = {} as MatPaginator;
+    component.ngAfterViewInit();
+
+    expect(component.dataSource.paginator).toBeDefined();
+  });
+
+  it('should fetch user repositories and set data source', () => {
+    const mockResponse = {
+      docs: [{ name: 'Repo 1' }, { name: 'Repo 2' }],
+      totalDocs: 2,
+    };
+    githubService.getUserRepos.and.returnValue(of(mockResponse));
+
+    component.getUserRepos();
+
+    expect(githubService.getUserRepos).toHaveBeenCalledWith(1);
+    expect(component.length).toBe(2);
+    expect(component.isLoading).toBeFalse();
+  });
+
+  it('should handle errors when fetching user repositories', () => {
+    githubService.getUserRepos.and.returnValue(throwError('Error'));
+
+    component.getUserRepos();
+
+    expect(component.isLoading).toBeFalse();
+  });
+
+  it('should handle pagination events', () => {
+    const mockEvent: PageEvent = { pageIndex: 1, pageSize: 10, length: 100 };
+    component.handlePageEvent(mockEvent);
+
+    expect(githubService.getUserRepos).toHaveBeenCalledWith(2);
   });
 });

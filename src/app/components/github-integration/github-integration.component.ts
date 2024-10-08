@@ -65,6 +65,7 @@ export class GithubIntegrationComponent implements OnInit {
   remove(): void {
     this.githubService.removeIntegration().subscribe(() => {
       localStorage.removeItem('accessToken');
+      this.integrationDetails = null;
     });
   }
 }
