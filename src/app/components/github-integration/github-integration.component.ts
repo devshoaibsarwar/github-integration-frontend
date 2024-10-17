@@ -1,15 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import 'ag-grid-enterprise';
+import { faGithub } from '@fortawesome/free-brands-svg-icons'; 
+import { faCheckCircle, faRepeat, faHatCowboy } from '@fortawesome/free-solid-svg-icons';
 import { IntegrationDetails } from 'src/app/interfaces/User';
 import { GithubService } from 'src/app/services/github.service';
 
 @Component({
   selector: 'app-github-integration',
   templateUrl: './github-integration.component.html',
-  styleUrls: ['./github-integration.component.css'],
+  styleUrls: ['./github-integration.component.scss']
 })
 export class GithubIntegrationComponent implements OnInit {
+  faCheckCircle = faCheckCircle;
+  faGithub = faGithub;
+  faRepeat = faRepeat;
+  faHatCowboy = faHatCowboy;
+
   integrationDetails: IntegrationDetails | null = null;
   isLoading = true;
   private readonly _destroy$ = new Subject<void>();

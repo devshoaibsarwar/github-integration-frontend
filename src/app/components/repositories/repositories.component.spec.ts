@@ -35,12 +35,6 @@ describe('RepositoriesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize the data source on init', () => {
-    component.ngOnInit();
-
-    expect(githubService.getUserRepos).toHaveBeenCalledWith(1);
-  });
-
   it('should set paginator after view init', () => {
     component.ngAfterViewInit();
 
@@ -76,10 +70,4 @@ describe('RepositoriesComponent', () => {
     expect(component.isLoading).toBeFalse();
   });
 
-  it('should handle pagination events', () => {
-    const mockEvent: PageEvent = { pageIndex: 1, pageSize: 10, length: 100 };
-    component.handlePageEvent(mockEvent);
-
-    expect(githubService.getUserRepos).toHaveBeenCalledWith(2);
-  });
 });

@@ -10,11 +10,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GithubIntegrationComponent } from './components/github-integration/github-integration.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { RepositoriesComponent } from './components/repositories/repositories.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   declarations: [
@@ -28,8 +30,10 @@ import { MatTableModule } from '@angular/material/table';
     HttpClientModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    FontAwesomeModule,
     MatExpansionModule,
     MatCardModule,
+    AgGridModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,

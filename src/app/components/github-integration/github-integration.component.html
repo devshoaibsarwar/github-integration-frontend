@@ -9,8 +9,10 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <div class="integration-panel">
+              <fa-icon [icon]="faGithub"></fa-icon> 
               <span>GitHub</span>
-              <mat-icon aria-hidden="false" fontIcon="check_circle"></mat-icon>
+              <fa-icon [icon]="faCheckCircle" color="green" *ngIf="integrationDetails" class="mr-2"></fa-icon> 
+              <fa-icon [icon]="faRepeat" *ngIf="integrationDetails"></fa-icon>  
             </div>
             <span
               >Last Synced
@@ -21,6 +23,7 @@
         <mat-panel-description style="justify-content: end">
           <button mat-raised-button color="primary" (click)="remove()">
             Remove Integration
+            <fa-icon [icon]="faHatCowboy"></fa-icon>
           </button>
         </mat-panel-description>
       </mat-expansion-panel>

@@ -1,0 +1,9 @@
+mat-panel-title {
+  display: flex;
+  justify-content: space-between;
+
+  .integration-panel {
+    gap: 10px;
+    display: flex;
+  }  
+}
