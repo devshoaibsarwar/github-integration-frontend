@@ -1,4 +1,5 @@
 <div class="table-container">
+  <hr style="margin-top: 30px; margin-bottom: 30px;" />
   <div *ngIf="!isLoading">
     <h1 class="table-header">Your Repos</h1>
     <ag-grid-angular
@@ -11,5 +12,21 @@
       style="width: 100%; height: 500px;"
       (gridReady)="onGridReady($event)"
     />
+    <hr style="margin-top: 30px; margin-bottom: 30px;" />
+    <hr style="margin-top: 30px; margin-bottom: 30px;" />
+
+    <h1 class="table-header">Repos Details</h1>
+    <ag-grid-angular
+      [gridOptions]="detailGridOptions"
+      class="ag-theme-quartz"
+      [pagination]="true"
+      [suppressAggFuncInHeader]="true"
+      [overlayNoRowsTemplate]="overlayNoRowsTemplate"
+      style="width: 100%; height: 500px;"
+      (gridReady)="onDetailGridReady($event)"
+    />
+    <hr style="margin-top: 30px; margin-bottom: 30px;" />
   </div>
+
+  
 </div>
